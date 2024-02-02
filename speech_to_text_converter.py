@@ -1,6 +1,7 @@
 import argparse
 import json
 import librosa
+import numpy as np
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 
 class WhisperTranscriber:
@@ -8,7 +9,7 @@ class WhisperTranscriber:
     A class for transcribing audio using the Whisper ASR model.
     """
 
-    def __init__(self, model_name="openai/whisper-small", model_sampling_rate=16000):
+    def __init__(self, model_name: str = "openai/whisper-small", model_sampling_rate: int = 16000):
         """
         Initialize the WhisperTranscriber instance.
 
@@ -19,7 +20,7 @@ class WhisperTranscriber:
         self.processor, self.model = self.load_model_and_processor(model_name)
         self.model_sampling_rate = model_sampling_rate
 
-    def load_model_and_processor(self, model_name):
+    def load_model_and_processor(self, model_name: str):
         """
         Load the Whisper ASR model and processor.
 
@@ -34,7 +35,7 @@ class WhisperTranscriber:
         model.config.forced_decoder_ids = None
         return processor, model
 
-    def process_audio_file(self, audio_path):
+    def process_audio_file(self, audio_path: str) -> np.ndarray:
         """
         Process the audio file by loading and resampling it.
 
@@ -48,7 +49,7 @@ class WhisperTranscriber:
         data = librosa.resample(data, orig_sr=sampling_rate, target_sr=self.model_sampling_rate)
         return data
 
-    def transcribe_audio(self, data):
+    def transcribe_audio(self, data: np.ndarray) -> str:
         """
         Transcribe the given audio data.
 
@@ -63,7 +64,7 @@ class WhisperTranscriber:
         transcription = self.processor.batch_decode(predicted_ids, skip_special_tokens=True)
         return transcription
 
-    def transcribe_from_file(self, audio_path):
+    def transcribe_from_file(self, audio_path: str) -> str:
         """
         Transcribe audio from the specified file.
 
@@ -78,7 +79,7 @@ class WhisperTranscriber:
         return transcription
     
     
-def save_transcription_to_json(transcription_result, output_json_file):
+def save_transcription_to_json(transcription_result: str, output_json_file: str):
     """
     Save the transcription result into a JSON file.
 
